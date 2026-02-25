@@ -8,6 +8,19 @@ def load_service():
     
     return service
 
+def home():
+    st.header("Página Inicial")
+    st.write("Bem-vindo ao sistema.")
+
+def tr_generate():
+    st.header('Gere seu termo de referência')
+
+    uploaded_pdf = st.file_uploader(
+        label='Selecione o(s) arquivo(s)',
+        type=['pdf'],
+        accept_multiple_files=True
+    )
+
 st.set_page_config(
     page_title='SoLicita',
     page_icon='📄',
@@ -16,16 +29,23 @@ st.set_page_config(
     }
 )
 
-st.header('Assistente Técnico de Licitações')
-st.subheader('Fundamentado na Lei 14.133/2021 e modelos institucionais')
-st.write('Ferramenta de apoio técnico. A responsabilidade final permanece do servidor responsável.')
+if "page" not in st.session_state:
+    st.session_state.page = "Home"
 
 with st.sidebar:
-    st.sidebar.header("Informações do Sistema")
-    st.sidebar.markdown("Base normativa: Lei 14.133/2021"
-                        "\nModelos institucionais internos\n"
-                        "\nVersão 1.0 (uso interno)"
-                        )
+    st.header("Menu")
+
+    if st.button("Home"):
+        st.session_state.page = "Home"
+
+    if st.button("Gerar Termo de Referência"):
+        st.session_state.page = "TR"
+
+if st.session_state.page == "Home":
+    home()
+
+elif st.session_state.page == "TR":
+    tr_generate()
 
 service = load_service()
 
