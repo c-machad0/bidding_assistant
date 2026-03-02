@@ -177,6 +177,7 @@ pyrightconfig.json
 
 # Arquivos teste
 teste.py
+teste2.py
 
 # Arquivos utiltários
 erros.txt

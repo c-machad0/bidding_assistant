@@ -5,44 +5,49 @@ from service import Service
 def load_service():
     service = Service()
     service.build_service()
-    
+        
     return service
 
+class ChatService:
+    def __init__(self):
+        st.header("Bem vindo ao SoLicita")
+        st.subheader("Seu assistente sobre licitações.")
 
-st.header("Bem vindo ao SoLicita")
-st.subheader("Seu assistente sobre licitações.")
+        st.set_page_config(
+            page_title='SoLicita',
+            page_icon='📄',
+            menu_items={
 
-st.set_page_config(
-    page_title='SoLicita',
-    page_icon='📄',
-    menu_items={
+            }
+        )
 
-    }
-)
+        self.service = load_service()
 
-service = load_service()
+    def ai_chat(self):
+        user_question = st.chat_input("Como posso ajudar?")
 
-user_question = st.chat_input("Como posso ajudar?")
+        if "messages" not in st.session_state:
+            st.session_state["messages"] = []
 
-if "messages" not in st.session_state:
-    st.session_state["messages"] = []
+        if user_question and user_question.strip():
+            for message in st.session_state.messages:
+                st.chat_message(message["role"]).write(message["content"])
 
-if user_question and user_question.strip():
-    for message in st.session_state.messages:
-        st.chat_message(message["role"]).write(message["content"])
-
-    st.chat_message("user").write(user_question)
-
-    st.session_state.messages.append(
-        {"role": "user", "content": user_question}
-    )
-
-    if user_question:
-        with st.spinner('Buscando resposta...'):
-            response = service.ask_question(user_question)
-
-            st.chat_message("assistant").write(response)
+            st.chat_message("user").write(user_question)
 
             st.session_state.messages.append(
-                {"role": "assistant", "content": response}
+                {"role": "user", "content": user_question}
             )
+
+            if user_question:
+                with st.spinner('Buscando resposta...'):
+                    response = self.service.ask_question(user_question)
+
+                    st.chat_message("assistant").write(response)
+
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": response}
+                    )
+
+app = ChatService()
+app.ai_chat()
