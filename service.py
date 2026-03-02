@@ -104,8 +104,7 @@ class Service:
         7. Sempre responda em português brasileiro.
         8. A resposta final deve ser amigável, clara e útil ao usuário.
 
-        Se a pergunta envolver interpretação jurídica, limite-se ao que pode ser inferido
-        diretamente do texto legal recuperado.
+        Responda em formato markdown bem estruturado.
         """
 
         return self.system_prompt
@@ -138,6 +137,9 @@ class Service:
         )
 
         return self.rag_chain
+    
+    def ask_question(self, question: str):
+        return self.rag_chain.invoke(question)
 
     def build_service(self):
         self.set_vector_store()

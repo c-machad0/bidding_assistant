@@ -8,18 +8,9 @@ def load_service():
     
     return service
 
-def home():
-    st.header("Página Inicial")
-    st.write("Bem-vindo ao sistema.")
 
-def tr_generate():
-    st.header('Gere seu termo de referência')
-
-    uploaded_pdf = st.file_uploader(
-        label='Selecione o(s) arquivo(s)',
-        type=['pdf'],
-        accept_multiple_files=True
-    )
+st.header("Bem vindo ao SoLicita")
+st.subheader("Seu assistente sobre licitações.")
 
 st.set_page_config(
     page_title='SoLicita',
@@ -29,34 +20,29 @@ st.set_page_config(
     }
 )
 
-if "page" not in st.session_state:
-    st.session_state.page = "Home"
-
-with st.sidebar:
-    st.header("Menu")
-
-    if st.button("Home"):
-        st.session_state.page = "Home"
-
-    if st.button("Gerar Termo de Referência"):
-        st.session_state.page = "TR"
-
-if st.session_state.page == "Home":
-    home()
-
-elif st.session_state.page == "TR":
-    tr_generate()
-
 service = load_service()
 
-user_question = st.text_area(
-    'Descreva detalhadamente sua dúvida ou solicitação técnica',
-    height=200
-)
-button = st.button("Consultar")
+user_question = st.chat_input("Como posso ajudar?")
 
-if button and user_question.strip():
-    with st.spinner("Consultando o banco de dados..."):
-        response = service.rag_chain.invoke(user_question)
-        st.markdown(response)
-        st.divider()
+if "messages" not in st.session_state:
+    st.session_state["messages"] = []
+
+if user_question and user_question.strip():
+    for message in st.session_state.messages:
+        st.chat_message(message["role"]).write(message["content"])
+
+    st.chat_message("user").write(user_question)
+
+    st.session_state.messages.append(
+        {"role": "user", "content": user_question}
+    )
+
+    if user_question:
+        with st.spinner('Buscando resposta...'):
+            response = service.ask_question(user_question)
+
+            st.chat_message("assistant").write(response)
+
+            st.session_state.messages.append(
+                {"role": "assistant", "content": response}
+            )
