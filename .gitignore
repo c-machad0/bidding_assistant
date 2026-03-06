@@ -186,4 +186,7 @@ melhorias.txt
 1.0.0
 
 # Arquivos de database
-licita_database/
+vector_db/
+
+# Dados para RAG
+data/
