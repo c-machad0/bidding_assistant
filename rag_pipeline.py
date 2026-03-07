@@ -37,7 +37,9 @@ class RagPipeline:
         for article in articles: # Transformando List[str] em List[Documents]
             doc = Document(
                 page_content=article,
-                metadata={"fonte": "Lei 14133"}
+                metadata={
+                    "fonte": "Lei 14133",
+                    }
             )
             self.documents.append(doc)
 
@@ -85,7 +87,10 @@ class RagPipeline:
     
 
     def retriever_vector_store(self):
-        self.retriever = self.vector_store.as_retriever()
+        self.retriever = self.vector_store.as_retriever(
+            search_type="mmr",
+            search_kwargs={"k": 5}
+        )
 
         return self.retriever
     
