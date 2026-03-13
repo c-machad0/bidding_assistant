@@ -176,6 +176,7 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 # Arquivos teste
+testes/
 teste.py
 teste2.py
 teste3.py

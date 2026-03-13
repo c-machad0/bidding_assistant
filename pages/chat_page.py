@@ -1,5 +1,11 @@
-from app import load_engine
+from engine import AIEngine
 import streamlit as st
+
+@st.cache_resource # Decorator para armazenar em cache funções que retornam objetos de recursos (por exemplo, conexões de banco de dados, modelos de aprendizado de máquina).
+def load_engine():
+    engine = AIEngine()
+
+    return engine
 
 engine = load_engine()
 
