@@ -11,9 +11,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 class RagIngest:
 
     def __init__(self):
-        pdf_path = os.path.join("data", "L14133.pdf")
-        loader = PyPDFLoader(pdf_path)
-        self.docs = loader.load()
+        self.pdf_folder = 'data'
+
+        self.docs = self.load_file_for_rag()
 
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size = 500,
@@ -24,7 +24,30 @@ class RagIngest:
         self.persist_directory = 'vector_db'
 
 
-    def chunk_for_article(self, text: list) -> list[Document]:
+    def load_file_for_rag(self):
+
+        docs = []
+
+        if not os.path.exists(self.pdf_folder):
+            raise FileNotFoundError("Pasta 'data' não encontrada.")
+
+        for pdf_file in os.listdir(self.pdf_folder):
+            if pdf_file.endswith(".pdf"):
+                pdf_path = os.path.join(self.pdf_folder, pdf_file)
+                loader = PyPDFLoader(pdf_path)
+
+                pages = loader.load()
+
+                # Juntando todo conteúdo em um unico texto
+                full_text = "\n\n".join(page.page_content for page in pages)
+                article_docs = self.chunk_for_article(full_text, pdf_file)
+
+                docs.extend(article_docs)
+
+        return docs
+    
+
+    def chunk_for_article(self, text: str, source: str) -> list[Document]:
         # Dividindo os chunks por artigos
         pattern = r'(Art\.?\s+\d+[º°o]?[\s\S]*?)(?=Art\.?\s+\d+[º°o]?|$)'
         articles = re.findall(pattern, text)
@@ -36,7 +59,8 @@ class RagIngest:
             doc = Document(
                 page_content=article,
                 metadata={
-                    "type_document": "Lei 14133",
+                    "type_document": "lei",
+                    "source": source
                     }
             )
             documents.append(doc)
@@ -44,16 +68,8 @@ class RagIngest:
         return documents
     
 
-    def get_full_text(self) -> list[Document]:
-        # Juntando todo conteúdo em um unico texto
-        full_text = "\n".join(doc.page_content for doc in self.docs)
-        articles = self.chunk_for_article(full_text)
-
-        return articles
-    
-
     def doc_splitter(self):
-        documents = self.get_full_text()
+        documents = self.docs
 
         self.split_docs = self.splitter.split_documents(documents)
 

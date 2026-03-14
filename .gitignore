@@ -187,6 +187,7 @@ erros.txt
 melhorias.txt
 *.pdf
 1.0.0
+arquitetura.txt
 
 # Arquivos de database
 vector_db/

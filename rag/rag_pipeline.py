@@ -1,14 +1,9 @@
-import os
-import re
-
 from langchain_community.vectorstores import Chroma
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_core.documents import Document
-from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 
 
 from prompts import CHAT_SYSTEM_PROMPT
@@ -28,7 +23,8 @@ class RagPipeline():
         )
 
         self.retriever = self.vector_store.as_retriever(
-            search_kwargs={"k": 3}
+            search_kwargs={"k": 3},
+            filter={"source": "14133"}
         )
 
         self.chat_prompt = ChatPromptTemplate.from_messages([
@@ -56,4 +52,5 @@ class RagPipeline():
 
     
     def format_docs(self, docs):
+        # Transforma os documentos recuperados em um texto unico
         return "\n\n".join(doc.page_content for doc in docs)

@@ -14,8 +14,6 @@ class AIEngine():
             ingest = RagIngest()
             ingest.build_ingest()
 
-        self.rag = RagPipeline() 
-
 
     def ask_question(self, question):
         return self.rag.chat_chain.invoke(question)
