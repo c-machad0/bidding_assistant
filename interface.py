@@ -6,6 +6,7 @@ import streamlit as st
 
 from app import App
 
+
 @st.cache_resource
 def load_engine():
     app = App()
@@ -64,5 +65,10 @@ with st.form("Geração de Termo de Referência"):
 
         if submitted:
             with st.spinner("Gerando arquivo..."):
-                app = App()
-                app.generate_tr()
+                app.generate_tr({
+                "objeto_tr": objeto_tr,
+                "select_secretary": select_secretary,
+                "date_execution": date_execution,
+                "bidding_modality": bidding_modality,
+                "base_value": base_value
+            })

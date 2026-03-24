@@ -6,7 +6,6 @@ import streamlit as st
 
 from config import BASE_DIR, sections
 from docxtpl import DocxTemplate
-from interface import date_execution, objeto_tr, select_secretary, bidding_modality, base_value
 from ingest import RagIngest
 from pipeline import RagPipeline
 
@@ -21,9 +20,15 @@ class App():
             ingest.build_ingest()
 
     
-    def generate_tr(self, query):
+    def generate_tr(self, query, data):
 
         result = {}
+
+        objeto_tr = data["objeto_tr"]
+        select_secretary = data["select_secretary"]
+        date_execution = data["date_execution"]
+        bidding_modality = data["bidding_modality"]
+        base_value = data["base_value"]
 
         template_path = os.path.join(
             BASE_DIR,

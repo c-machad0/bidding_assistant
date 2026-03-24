@@ -1,5 +1,6 @@
 from langchain_community.vectorstores import Chroma
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
 from langchain_openai import OpenAI, OpenAIEmbeddings
 
 
@@ -23,6 +24,6 @@ class RagPipeline():
             search_kwargs={'k': 6}
         )
 
-        self.prompt = TR_SECTION_PROMPT
+        self.prompt = PromptTemplate.from_template(TR_SECTION_PROMPT)
 
         self.chain = self.prompt | self.model | StrOutputParser()
