@@ -1,7 +1,5 @@
 import os
-
-
-import streamlit as st
+from io import BytesIO
 
 
 from config import BASE_DIR, sections
@@ -20,7 +18,7 @@ class App():
             ingest.build_ingest()
 
     
-    def generate_tr(self, query, data):
+    def generate_tr(self, data):
 
         result = {}
 
@@ -32,7 +30,6 @@ class App():
 
         template_path = os.path.join(
             BASE_DIR,
-            "documents",
             "modelo_tr_dispensa.docx"
         )
 
@@ -40,8 +37,8 @@ class App():
 
         # tratar datas
         if isinstance(date_execution, tuple):
-            data_inicio, data_fim = date_execution
-            date_execution_str = f"{data_inicio} a {data_fim}"
+            start_date, end_date = date_execution
+            date_execution_str = f"{start_date} a {end_date}"
         else:
             date_execution_str = str(date_execution)
 
@@ -66,18 +63,11 @@ class App():
 
             result[section] = response
 
-        outputh_path = os.path.join(BASE_DIR, 'documents', 'novo_tr.docx')
-
         doc.render(result)
-        doc.save(outputh_path)
 
-        with open(outputh_path, "rb") as file:
-            file_bytes = file.read()
+        file_stream = BytesIO()
+        doc.save(file_stream)
 
-        st.download_button(
-            label="Download Termo de Referência",
-            data=file_bytes,
-            file_name="novo_tr.docx",
-        )
+        file_stream.seek(0)
 
-        st.success("Termo de Referência gerado com sucesso!")
+        return file_stream.read()

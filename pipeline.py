@@ -1,8 +1,7 @@
 from langchain_community.vectorstores import Chroma
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
-from langchain_openai import OpenAI, OpenAIEmbeddings
-
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from prompts import TR_SECTION_PROMPT
 
@@ -10,8 +9,8 @@ from prompts import TR_SECTION_PROMPT
 class RagPipeline():
 
     def __init__(self):
-        self.model = OpenAI(
-            model='gpt-5-nano',
+        self.model = ChatOpenAI(
+            model='gpt-4o-mini',
             temperature=0.2,
         )
 
@@ -21,9 +20,9 @@ class RagPipeline():
         )
 
         self.retriever = self.vector_store.as_retriever(
-            search_kwargs={'k': 6}
+            search_kwargs={'k': 4}
         )
 
-        self.prompt = PromptTemplate.from_template(TR_SECTION_PROMPT)
+        self.prompt = ChatPromptTemplate.from_template(TR_SECTION_PROMPT)
 
         self.chain = self.prompt | self.model | StrOutputParser()

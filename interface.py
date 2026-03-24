@@ -21,7 +21,7 @@ st.set_page_config(
         )
 
 st.header("Bem vindo ao SoLicita", text_alignment="center")
-st.subheader("Seu assistente de licitações.", text_alignment="center")
+st.subheader("Seu assistente de licitações", text_alignment="center")
 
 # with st.sidebar:
 #     st.file_uploader(
@@ -63,12 +63,27 @@ with st.form("Geração de Termo de Referência"):
 
         submitted = st.form_submit_button("Gerar")
 
-        if submitted:
-            with st.spinner("Gerando arquivo..."):
-                app.generate_tr({
-                "objeto_tr": objeto_tr,
-                "select_secretary": select_secretary,
-                "date_execution": date_execution,
-                "bidding_modality": bidding_modality,
-                "base_value": base_value
-            })
+if submitted:
+    with st.spinner("Gerando arquivo..."):
+        file_bytes = app.generate_tr({
+        "objeto_tr": objeto_tr,
+        "select_secretary": select_secretary,
+        "date_execution": date_execution,
+        "bidding_modality": bidding_modality,
+        "base_value": base_value
+        })
+
+        if not file_bytes:
+            st.error("Erro ao gerar o arquivo.")
+        else:
+            st.session_state["file_bytes"] = file_bytes
+            st.success("Termo de Referência gerado com sucesso!")
+
+        
+        if 'file_bytes' in st.session_state:
+            st.download_button(
+                label="Download Termo de Referência",
+                data=file_bytes,
+                file_name="novo_tr.docx",
+                key='download_tr',
+            )
