@@ -1,5 +1,6 @@
 import os
 from io import BytesIO
+from datetime import date
 
 
 from config import BASE_DIR, sections
@@ -24,7 +25,8 @@ class App():
 
         objeto_tr = data["objeto_tr"]
         select_secretary = data["select_secretary"]
-        date_execution = data["date_execution"]
+        start_date = data["start_date"]
+        end_date = data["end_date"]
         bidding_modality = data["bidding_modality"]
         base_value = data["base_value"]
 
@@ -36,11 +38,8 @@ class App():
         doc = DocxTemplate(template_path)
 
         # tratar datas
-        if isinstance(date_execution, tuple):
-            start_date, end_date = date_execution
-            date_execution_str = f"{start_date} a {end_date}"
-        else:
-            date_execution_str = str(date_execution)
+        start_date_str = start_date.strftime("%d/%m/%Y")
+        end_date_str = end_date.strftime("%d/%m/%Y")
 
         for section in sections:
 
@@ -55,7 +54,8 @@ class App():
                 "context": context,
                 "objeto_tr": objeto_tr,
                 "select_secretary": select_secretary,
-                "date_execution": date_execution_str,
+                "start_date": start_date_str,
+                "end_date": end_date_str,
                 "bidding_modality": bidding_modality,
                 "base_value": base_value,
                 "section_name": section

@@ -14,5 +14,6 @@ sections = [
     "ob_contratada",
     "subcontratação",
     "secretaria",
-    "data_tr",
+    "start_date_str"
+    "end_date_str",
 ]

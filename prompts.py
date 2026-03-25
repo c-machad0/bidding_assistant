@@ -11,7 +11,8 @@ Dados da contratação:
 
 - Objeto: {objeto_tr}
 - Secretaria: {select_secretary}
-- Prazo de execução: {date_execution}
+- Data de elaboração do Termo de Referência: {start_date}
+- Vigência do contrato: {end_date}
 - Modalidade: {bidding_modality}
 - Valor estimado: {base_value}
 

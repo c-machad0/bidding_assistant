@@ -43,11 +43,18 @@ with st.form("Geração de Termo de Referência"):
                 "Secretaria de Desenvolvimento Urbano",
             ]
         )
-        date_execution = st.date_input(
-                "Prazo de Execução",
-                value=(date(2026, 1, 1), date(2030, 12, 31)),
+        start_date = st.date_input(
+                "Data de elaboração do Termo de Referência",
+                value=date(2026, 1, 1),
                 format="DD/MM/YYYY"
                 )
+        
+        end_date = st.date_input(
+            "Vigência do contrato",
+            value=date(2027, 12, 31),
+            format="DD/MM/YYYY"
+        )
+
         bidding_modality = st.selectbox(
              label="Modalidades",
              options=[
@@ -68,7 +75,8 @@ if submitted:
         file_bytes = app.generate_tr({
         "objeto_tr": objeto_tr,
         "select_secretary": select_secretary,
-        "date_execution": date_execution,
+        "start_date": start_date,
+        "end_date": end_date,
         "bidding_modality": bidding_modality,
         "base_value": base_value
         })
