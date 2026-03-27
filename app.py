@@ -11,12 +11,8 @@ from pipeline import RagPipeline
 
 class App():
 
-    def __init__(self):
-        self.rag = RagPipeline()
-
-        if not os.path.exists("vector_db"): # verifica se o vector_db existe
-            ingest = RagIngest()
-            ingest.build_ingest()
+    def __init__(self, vectorstore):
+        self.rag = RagPipeline(vectorstore)
 
     
     def generate_tr(self, data):

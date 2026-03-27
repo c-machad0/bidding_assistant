@@ -1,3 +1,4 @@
+import os
 from datetime import date
 
 
@@ -5,15 +6,17 @@ import streamlit as st
 
 
 from app import App
+from ingest import RagIngest
+from vectorstore import load_vectorstore
 
 
-@st.cache_resource
-def load_engine():
-    app = App()
+if not os.path.exists("vector_db"): # verifica se o vector_db existe
+            ingest = RagIngest()
+            ingest.build_ingest()
 
-    return app
+vectorstore = load_vectorstore()
+app = App(vectorstore)
 
-app = load_engine()
 
 st.set_page_config(
             page_title='SoLicita',
@@ -22,13 +25,6 @@ st.set_page_config(
 
 st.header("Bem vindo ao SoLicita", text_alignment="center")
 st.subheader("Seu assistente de licitações", text_alignment="center")
-
-# with st.sidebar:
-#     st.file_uploader(
-#         label="Faça upload do(s) arquivo(s)",
-#         type=['.pdf', '.docx'],
-#         accept_multiple_files=True
-#     )
 
 with st.form("Geração de Termo de Referência"):
         objeto_tr = st.text_input("Resumo do objeto")

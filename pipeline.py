@@ -8,16 +8,13 @@ from prompts import TR_SECTION_PROMPT
 
 class RagPipeline():
 
-    def __init__(self):
+    def __init__(self, vectorstore):
         self.model = ChatOpenAI(
             model='gpt-4o-mini',
             temperature=0.2,
         )
 
-        self.vector_store = Chroma(
-            persist_directory='vector_db',
-            embedding_function=OpenAIEmbeddings()
-        )
+        self.vector_store = vectorstore
 
         self.retriever = self.vector_store.as_retriever(
             search_kwargs={'k': 4}
