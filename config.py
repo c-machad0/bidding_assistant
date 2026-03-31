@@ -14,6 +14,15 @@ sections = [
     "ob_contratada",
     "subcontratação",
     "secretaria",
-    "start_date_str"
+    "start_date_str",
     "end_date_str",
 ]
+
+
+def get_api_key():
+    api_key = os.getenv("OPENAI_API_KEY")
+
+    if not api_key:
+        raise RuntimeError("OPENAI_API_KEY não configurada")
+
+    return api_key

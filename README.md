@@ -1,79 +1,173 @@
-# 📄 SoLicita - Assistente de Licitações
+# 📄 SoLicita — Assistente Inteligente para Licitações Públicas
 
-O **SoLicita** é uma aplicação desenvolvida para auxiliar na elaboração de documentos licitatórios, com foco na **geração automatizada de Termos de Referência (TR)**.
+O **SoLicita** é uma aplicação que automatiza a geração de **Termos de Referência (TR)** com base na **Lei 14.133/2021**, utilizando **RAG (Retrieval-Augmented Generation)** e modelos de linguagem (LLMs).
 
-A aplicação utiliza modelos de linguagem (LLMs) para gerar documentos estruturados, organizados por seções e adaptáveis conforme o contexto da contratação.
+O sistema foi projetado para gerar documentos técnicos **consistentes, padronizados e adaptáveis**, reduzindo o esforço manual na elaboração de processos licitatórios.
 
----
-
-## 🚀 Funcionalidades
-
-### 📄 Geração de Termo de Referência (TR)
-
-- Geração automatizada de TR completo
-- Estrutura dividida por seções
-- Uso de prompts específicos para cada parte do documento
-- Maior controle e consistência no conteúdo gerado
-- Facilidade de adaptação para diferentes tipos de contratação
+É importante salientar que a estrutura do termo de referência varia de município para município. Mesmo assim, a aplicação ja trabalha para atender os diferentes modelos, contanto que os campos simulados estejam configurados no template.
 
 ---
 
-## 🧠 Como funciona
+## 🚀 Principais Funcionalidades
 
-A geração do Termo de Referência segue um fluxo estruturado:
+### 📄 Geração Automatizada de TR
 
-1. O usuário fornece as informações necessárias sobre o objeto da contratação
-2. O sistema divide o documento em seções lógicas
-3. Cada seção é gerada individualmente utilizando prompts específicos
-4. As seções são consolidadas em um documento final coeso
+- Geração completa de Termo de Referência em `.docx`
+- Estrutura modular por seções
+- Conteúdo adaptado ao contexto da contratação
+- Uso de documentos institucionais e legislação como base
 
-Essa abordagem permite maior controle sobre a qualidade e padronização do documento.
+### 🧠 RAG (Retrieval-Augmented Generation)
+
+- Consulta a:
+  - 📚 Leis (ex: Lei 14.133/2021)
+  - 📄 Modelos institucionais
+- Recuperação semântica com embeddings
+- Geração baseada em contexto real (menos alucinação)
+
+### 🧩 Arquitetura Orientada a Seções
+
+- Cada seção do TR é gerada individualmente
+- Prompts especializados por contexto
+- Maior controle sobre qualidade e coerência
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## 🧠 Como o Sistema Funciona
 
-A aplicação segue uma organização simples e funcional:
+O fluxo da aplicação segue uma arquitetura baseada em RAG + geração estruturada:
+
+```mermaid
+flowchart TD
+    A[Usuário preenche formulário] --> B[Interface Streamlit]
+    B --> C[App.generate_tr()]
+    C --> D[Loop por seções]
+    D --> E[Retriever (Chroma)]
+    E --> F[Contexto relevante]
+    F --> G[LLM (OpenAI)]
+    G --> H[Texto da seção]
+    H --> I[DocxTemplate]
+    I --> J[Arquivo final .docx]
+```
+
+### Etapas:
+
+1. Usuário fornece dados da contratação
+2. O sistema percorre cada seção do TR
+3. Para cada seção:
+   - Busca contexto relevante (RAG)
+   - Gera conteúdo com LLM
+4. O documento final é montado com `docxtpl`
+
+---
+
+## 🏗️ Arquitetura do Projeto
 
 ```
 .
-├── app.py                  # Lógica principal da aplicação
-├── ingest.py               # Processo de RAG
-├── data/                   # Arquivos de modelos institucionais
-├── pipeline.py             # Pipeline e consumo dos arquivos ingeridos
-├── prompts.py              # Modelos de prompts usados
-├── interface.py            # Interface da aplicação
-├── requirements.txt        # Dependências do projeto
+├── app.py              # Orquestra geração do TR
+├── interface.py        # Interface Streamlit
+├── ingest.py           # Pipeline de ingestão (RAG)
+├── pipeline.py         # Pipeline de geração (LLM + Prompt)
+├── vectorstore.py      # Carregamento do banco vetorial
+├── prompts.py          # Templates de prompt
+├── config.py           # Configurações globais
+│
+├── templates/          # Template .docx do TR
+├── data/               # Documentos institucionais (RAG)
+│   ├── laws/
+│   └── tr_models/
+│
+├── vector_db/          # Banco vetorial persistido (Chroma)
+└── requirements.txt
 ```
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🔍 Detalhes Técnicos
 
-- Python
+### 🔹 Ingestão de Dados (`ingest.py`)
+
+- Suporte a:
+  - PDF (`PyPDFLoader`)
+  - DOCX (`Docx2txtLoader`)
+- Estratégias de chunking:
+  - 📜 Leis → separação por artigos
+  - 📄 Modelos → separação por seções
+- Armazenamento:
+  - ChromaDB (persistente)
+
+---
+
+### 🔹 Pipeline de Geração (`pipeline.py`)
+
+- Modelo: `gpt-4o-mini`
+- Baixa temperatura → maior precisão técnica
+- Prompt estruturado por seção
+- Uso de `LangChain` para orquestração
+
+---
+
+### 🔹 Geração do Documento (`app.py`)
+
+- Loop por seções do TR
+- Recuperação contextual (RAG)
+- Geração independente por seção
+- Renderização com `docxtpl`
+
+---
+
+### 🔹 Interface (`interface.py`)
+
 - Streamlit
-- LangChain
-- OpenAI (LLM)
+- Formulário estruturado
+- Download direto do arquivo gerado
+- Cache do vectorstore para performance
+
+---
+
+## 📁 Estrutura de Dados (RAG)
+
+A pasta `data/` contém documentos utilizados como base de conhecimento.
+
+⚠️ **Importante:**  
+Os arquivos reais não estão no repositório por conterem dados sensíveis.
+
+### Estrutura esperada:
+
+```
+data/
+├── laws/         # Leis e normas
+├── tr_models/    # Modelos institucionais reais
+```
+
+### Exemplo de modelo:
+
+```
+1. OBJETO
+Conteúdo...
+
+2. JUSTIFICATIVA
+Conteúdo...
+
+3. EXECUÇÃO
+Conteúdo...
+```
 
 ---
 
 ## ⚙️ Instalação
 
 ```bash
-# Clone o repositório
 git clone https://github.com/c-machad0/bidding_assistant.git
 
-# Acesse a pasta
 cd bidding_assistant
 
-# Crie um ambiente virtual
 python -m venv venv
 
-# Ative o ambiente
 # Windows
 venv\Scripts\activate
 
-# Instale as dependências
 pip install -r requirements.txt
 ```
 
@@ -82,7 +176,17 @@ pip install -r requirements.txt
 ## ▶️ Execução
 
 ```bash
-streamlit run .\interface.py
+streamlit run interface.py
+```
+
+---
+
+## 🔐 Variáveis de Ambiente
+
+Crie um arquivo `.env` ou configure no sistema:
+
+```
+OPENAI_API_KEY=sua-chave-aqui
 ```
 
 ---
@@ -90,28 +194,38 @@ streamlit run .\interface.py
 ## 📌 Roadmap
 
 - [x] Geração de TR por seções
-- [x] Estrutura baseada em prompts específicos
-- [ ] Exportação automática para Word (.docx)
-- [ ] Interface mais detalhada para entrada de dados
-- [ ] Persistência de documentos gerados
-- [ ] Personalização por tipo de contratação
+- [x] Integração com RAG
+- [x] Exportação em `.docx`
+- [ ] Interface mais robusta (validações e UX)
+- [ ] Multi-modelos de TR por município
+- [ ] Histórico de documentos gerados
+- [ ] Deploy (Streamlit Cloud ou backend dedicado)
+- [ ] Controle de versões dos documentos
+
+---
+
+## 💡 Diferenciais do Projeto
+
+- Arquitetura **modular e escalável**
+- Uso real de **RAG aplicado ao setor público**
+- Separação clara de responsabilidades
+- Foco em **problema real de negócio**
+- Pronto para evolução como produto SaaS
 
 ---
 
 ## 🤝 Contribuição
 
-Contribuições são bem-vindas!
-
-1. Fork o projeto
-2. Crie uma branch (`feature/minha-feature`)
-3. Commit suas alterações
-4. Abra um Pull Request
+1. Fork o projeto  
+2. Crie uma branch (`feature/minha-feature`)  
+3. Commit suas alterações  
+4. Abra um Pull Request  
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT.
+MIT License
 
 ---
 

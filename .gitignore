@@ -185,13 +185,12 @@ teste4.py
 # Arquivos utiltários
 erros.txt
 melhorias.txt
-*.pdf
 1.0.0
 arquitetura.txt
-modelo_tr_dispensa.docx
+templates/modelo_tr.docx
 
 # Arquivos de database
 vector_db/
 
 # Dados para RAG
-data/
+data/tr_models
