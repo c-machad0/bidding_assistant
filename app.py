@@ -28,7 +28,8 @@ class App():
 
         template_path = os.path.join(
             BASE_DIR,
-            "templates/modelo_tr.docx"
+            "templates",
+            "modelo_tr.docx"
         )
 
         doc = DocxTemplate(template_path)
