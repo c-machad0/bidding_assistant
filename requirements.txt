@@ -1,6 +1,6 @@
 streamlit
 
-# LangChain (sem conflito)
+# LangChain
 langchain
 langchain-openai
 langchain-community
@@ -19,6 +19,10 @@ pandas
 # Geração de documentos
 python-docx
 docxtpl
+
+# Loaders
+pypdf
+docx2txt
 
 # Utilidades
 python-dotenv
