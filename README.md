@@ -37,18 +37,18 @@ O sistema foi projetado para gerar documentos técnicos **consistentes, padroniz
 
 O fluxo da aplicação segue uma arquitetura baseada em RAG + geração estruturada:
 
-```mermaid
-flowchart TD
-    A[Usuário preenche formulário] --> B[Interface Streamlit]
-    B --> C[App.generate_tr()]
-    C --> D[Loop por seções]
-    D --> E[Retriever (Chroma)]
-    E --> F[Contexto relevante]
-    F --> G[LLM (OpenAI)]
-    G --> H[Texto da seção]
-    H --> I[DocxTemplate]
-    I --> J[Arquivo final .docx]
-```
+O funcionamento do sistema segue as seguintes etapas:
+
+1. O usuário preenche o formulário na interface (Streamlit).1
+2. A aplicação recebe os dados e chama a função generate_tr
+3. O sistema percorre cada seção do Termo de Referência
+4. Para cada seção:
+    - Realiza uma busca no banco vetorial (Chroma)
+    - Recupera contextos relevantes (leis e modelos)
+    - Envia o contexto junto com os dados para o modelo de linguagem (LLM)
+    - Gera o conteúdo da seção
+5. Todas as seções geradas são inseridas no template .docx
+6. O documento final é gerado e disponibilizado para download
 
 ### Etapas:
 
