@@ -24,5 +24,8 @@ docxtpl
 pypdf
 docx2txt
 
+# Fix
+protobuf==3.20.3
+
 # Utilidades
 python-dotenv
