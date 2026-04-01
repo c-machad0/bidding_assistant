@@ -36,6 +36,7 @@ class RagIngest:
             return PyPDFLoader(file_path)
         elif file_path.endswith('.docx'):
             return Docx2txtLoader(file_path)
+        return None
 
 
     def identify_doc(self):
@@ -46,49 +47,57 @@ class RagIngest:
         data_path = os.path.join(BASE_DIR, self.file_folder)
 
         if not os.path.exists(data_path):
-            raise FileNotFoundError("Pasta 'data' não encontrada")
-        
-        laws = os.path.join(BASE_DIR, "data", "laws")
-        tr_models = os.path.join(BASE_DIR, "data", "tr_models")
+            print("⚠️ Pasta 'data' não encontrada. Rodando sem ingest.")
+            return []
+
+        laws = os.path.join(data_path, "laws")
+        tr_models = os.path.join(data_path, "tr_models")
 
         all_docs = []
 
-        for folder in os.listdir(data_path):
-            if folder == 'laws':
-                docs = self.router_ingest(
-                    folder_path=laws,
-                    call_function=self.chunk_for_article
-                )
-                all_docs.extend(docs)
+        # ✔ Verifica se pasta laws existe
+        if os.path.exists(laws):
+            docs = self.router_ingest(
+                folder_path=laws,
+                call_function=self.chunk_for_article
+            )
+            all_docs.extend(docs)
+        else:
+            print("⚠️ Pasta 'laws' não encontrada")
 
-            elif folder == 'tr_models':
-                docs = self.router_ingest(
-                    folder_path=tr_models,
-                    call_function=self.chunk_for_section
-                )
-                all_docs.extend(docs)
+        # ✔ Verifica se pasta tr_models existe
+        if os.path.exists(tr_models):
+            docs = self.router_ingest(
+                folder_path=tr_models,
+                call_function=self.chunk_for_section
+            )
+            all_docs.extend(docs)
+        else:
+            print("⚠️ Pasta 'tr_models' não encontrada")
 
-            else:
-                raise FileNotFoundError("Pasta não encontrada")
-
-        return all_docs 
+        return all_docs
 
 
     def router_ingest(self, folder_path, call_function):
 
         docs = []
+
+        if not os.listdir(folder_path):
+            print(f"⚠️ Pasta vazia: {folder_path}")
+            return docs
         
         for file in os.listdir(folder_path):
             if file.endswith(('.pdf', '.doc', '.docx')):
                 file_path = os.path.join(folder_path, file)
                 loader = self.get_logger(file_path)
 
-                pages = loader.load()
+                if not loader:
+                    continue
 
+                pages = loader.load()
                 full_text = "\n\n".join(page.page_content for page in pages)
 
                 new_docs = call_function(full_text)
-
                 docs.extend(new_docs)
 
         return docs
@@ -110,7 +119,7 @@ class RagIngest:
                 page_content=article,
                 metadata={
                     "type_document": "lei",
-                    }
+                }
             )
             documents.append(doc)
 
@@ -120,13 +129,11 @@ class RagIngest:
     def chunk_for_section(self, text: str):
 
         pattern = r"(?ms)^(\d+)\.\s*(.+?)\n(.*?)(?=^\d+\.|\Z)"
-
         pattern_chunk = re.findall(pattern, text)
 
         documents = []
 
         for context in pattern_chunk:
-
             doc = Document(
                 page_content=f"{context[0]}. {context[1]}\n{context[2]}",
                 metadata={
@@ -134,7 +141,6 @@ class RagIngest:
                     "section_title": context[1],
                 }
             )
-
             documents.append(doc)
 
         return documents
@@ -154,6 +160,10 @@ class RagIngest:
     
 
     def build_ingest(self):
+
+        if not self.docs:
+            print("⚠️ Nenhum documento encontrado para ingest.")
+            return
 
         split_docs = self.doc_spliter()
 
