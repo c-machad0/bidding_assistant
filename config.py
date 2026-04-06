@@ -26,3 +26,11 @@ def get_api_key():
         raise RuntimeError("OPENAI_API_KEY não configurada")
 
     return api_key
+
+def get_template():
+    template_path = os.getenv("TEMPLATE_PATH")
+
+    if template_path:
+        return os.path.join(BASE_DIR, template_path)
+
+    return os.path.join(BASE_DIR, "templates", "modelo_tr.docx")

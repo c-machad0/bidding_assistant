@@ -1,11 +1,8 @@
-import os
 from io import BytesIO
-from datetime import date
 
 
-from config import BASE_DIR, sections
+from config import sections, get_template
 from docxtpl import DocxTemplate
-from ingest import RagIngest
 from pipeline import RagPipeline
 
 
@@ -26,11 +23,7 @@ class App():
         bidding_modality = data["bidding_modality"]
         base_value = data["base_value"]
 
-        template_path = os.path.join(
-            BASE_DIR,
-            "templates",
-            "modelo_tr.docx"
-        )
+        template_path = get_template()
 
         doc = DocxTemplate(template_path)
 

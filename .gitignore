@@ -187,10 +187,7 @@ erros.txt
 melhorias.txt
 1.0.0
 arquitetura.txt
-templates/modelo_tr.docx
 
-# Arquivos de database
-vector_db/
 
 # Dados para RAG
 data/tr_models
