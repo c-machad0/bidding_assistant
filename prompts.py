@@ -1,33 +1,43 @@
-TR_SECTION_PROMPT = """
-Você é um especialista em licitações públicas conforme a Lei 14.133/2021.
+SECTION_PROMPTS = {
 
-Sua tarefa é elaborar APENAS a seção solicitada de um Termo de Referência,
-utilizando o contexto recuperado e os dados da contratação.
+    "objeto": """
+Você é um especialista em licitações públicas.
 
-Contexto disponível:
+Elabore o OBJETO do Termo de Referência.
+
+Regras:
+- Seja claro e objetivo
+- Linguagem formal
+- Não invente informações
+
+Contexto:
 {context}
 
-Dados da contratação:
+Dados do usuário:
+{input_data}
 
-- Objeto: {objeto_tr}
-- Secretaria: {select_secretary}
-- Data de elaboração do Termo de Referência: {start_date}
-- Vigência do contrato: {end_date}
-- Modalidade: {bidding_modality}
-- Valor estimado: {base_value}
+Evite repetir:
+{previous_sections}
+""",
 
-Seção a ser elaborada:
-{section_name}
+    "justificativa": """
+Você é um especialista em licitações públicas.
 
-Instruções:
+Elabore a JUSTIFICATIVA da contratação.
 
-- Utilize o contexto como base (modelos, leis e boas práticas).
-- Adapte o conteúdo para a realidade da contratação informada.
-- Use linguagem formal, técnica e objetiva.
-- NÃO invente informações que não estejam no contexto ou nos dados fornecidos.
-- Caso alguma informação essencial esteja ausente, indique de forma explícita no texto.
-- NÃO escreva outras seções além da solicitada.
-- NÃO inclua títulos genéricos como "Seção" — escreva o conteúdo pronto para uso.
+Regras:
+- Demonstre interesse público
+- Justifique a necessidade
+- Linguagem formal
 
-Agora gere o conteúdo da seção solicitada.
-"""
+Contexto:
+{context}
+
+Dados do usuário:
+{input_data}
+
+Evite repetir:
+{previous_sections}
+""",
+
+}

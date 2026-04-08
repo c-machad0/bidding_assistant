@@ -87,7 +87,7 @@ if submitted:
         if 'file_bytes' in st.session_state:
             st.download_button(
                 label="Download Termo de Referência",
-                data=file_bytes,
+                data=st.session_state["file_bytes"],  # FIX
                 file_name="novo_tr.docx",
                 key='download_tr',
             )
